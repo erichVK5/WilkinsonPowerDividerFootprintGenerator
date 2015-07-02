@@ -297,7 +297,7 @@ public class WilkinsonPowerDividerFootprintGenerator
 	private static void printUsage()
 	{
 		System.out.println("\nUsage:\n\n\t" +
-			"java WilkinsonPowerDivderFootprintGenerator -option value\n" +
+			"java WilkinsonPowerDividerFootprintGenerator -option value\n" +
 			"\n\t\t-k\texport a kicad module, default is geda .fp file\n" +
                         "\n\t\t-r long\t length of resistor gap in microns\n" +
                         "\n\t\t-f long\t frequency of operation in Megahertz\n" +

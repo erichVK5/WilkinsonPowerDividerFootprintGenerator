@@ -16,7 +16,7 @@ You can then compile the java source code:
 
 Usage:
 
-	java WilkinsonPowerDivderFootprintGenerator -option value
+	java WilkinsonPowerDividerFootprintGenerator -option value
 
 		-k	export a kicad module, default is geda .fp file
 
