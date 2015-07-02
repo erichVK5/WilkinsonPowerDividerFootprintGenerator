@@ -319,8 +319,9 @@ public class WilkinsonPowerDividerFootprintGenerator
 			"Example usage:\n\n\t" +
 			"java WilkinsonPowerDividerFootprintGenerator -r 2000 -f 1800 -w 3000 -l 2000 -k\n\t" +
 			"generates a wilkinson power divider with two arms\n\t" +
-			"lambda/4 in length, separated by a resistor gap of\n\t" +
+			"lambda/4 in length, separated by a resistor gap\n\t" +
 			"of 2000 microns, track width of 3000 microns, and\n\t" +
-			"using segment lengths of 2000 microns to create the arcs\n");
+			"using segment lengths of 2000 microns to create the\n\t" +
+			"arcs in a kicad module.\n");
 	}
 }
