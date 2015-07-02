@@ -16,7 +16,7 @@ You can then compile the java source code:
 
 Tips:
 
-The utility adds input and output pads in the final three lines of the footprint file. Users will need to modify these to achieve the required impedance relative to the power divider arms. Users may wish to experiment with segment lengths to achieve a suitably rounded contour, and dimensions should be verified before sending of designs for fabrication.
+The utility adds input and output pads in the final three lines of the footprint file. Users will need to modify these to achieve the required impedance relative to the power divider arms. Users may wish to experiment with segment lengths to achieve a suitably rounded contour, and dimensions should be verified before sending off designs for fabrication.
 
 
 Usage:
