@@ -26,23 +26,23 @@ Usage:
 
 	java WilkinsonPowerDividerFootprintGenerator -option value
 
-		-k	export a kicad module, default is geda .fp file
+		-k			export a kicad module, default is geda .fp file
 
-		-r long	 length of resistor gap in microns
+		-r long	 	length of resistor gap in microns
 
-		-f double	 frequency of operation in Megahertz
+		-f double	frequency of operation in Megahertz
 
-		-w long	 track width in microns
+		-w long		track width in microns
 
-		-p long	 input/output port track width in microns
-			default: port track width = track width
+		-p long		input/output port track width in microns
+				default: port track width = track width
 
-		-v double	 velocity factor <= 1.0
-			default: 1.0
+		-v double	velocity factor <= 1.0
+				default: 1.0
 
-		-l long	 length of segment used to approximate circular arc in microns
+		-l long		length of segment used to approximate circular arc in microns
 
-		-h	 prints this
+		-h		prints this
 
 Example usage:
 
