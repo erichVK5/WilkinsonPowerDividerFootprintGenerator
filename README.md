@@ -35,14 +35,14 @@ Usage:
 		-w long		track width in microns
 
 		-p long		input/output port track width in microns
-				default: port track width = track width
+					default: port track width = track width
 
 		-v double	velocity factor <= 1.0
-				default: 1.0
+					default: 1.0
 
 		-l long		length of segment used to approximate circular arc in microns
 
-		-h		prints this
+		-h			prints this
 
 Example usage:
 
