@@ -41,12 +41,15 @@ public class WilkinsonPowerDividerFootprintGenerator
 		// set a few defaults
                 long segmentLength = 1000; // 1mm length in microns
                 long trackWidth = 220; // microns
+		long portTrackWidth = trackWidth; // microns
                 double frequencyMhz = 1000;
                 long resistorGap = 1000;    // microns
+		double velocityFactor = 1.0;
 
 		// we'll need a flag or two
                 boolean finishedLoop = false;
                 boolean theOneTrueEDAsuiteGEDA = true;
+		boolean portTrackWidthSpecified = false;
                 	// obviously, !theOneTrueEDAsuiteGEDA = kicad :-)
 
 		// we now parse arguments parsed via the command line
@@ -78,6 +81,23 @@ public class WilkinsonPowerDividerFootprintGenerator
                                 trackWidth = Long.parseLong(args[counter+1]);
                                 counter++;
                         }
+			else if (args[counter].startsWith("-v"))
+			{
+				velocityFactor = Double.parseDouble(args[counter+1]);
+				counter++;
+				if (velocityFactor > 1.0)
+				{
+					System.out.println("Velocity factor > 1.0..." +
+					" yer cannae change the laws of physics!!");
+					velocityFactor = 1.0;
+				}
+			}
+			else if (args[counter].startsWith("-p"))
+			{
+				portTrackWidth = Long.parseLong(args[counter+1]);
+				portTrackWidthSpecified = true;
+				counter++;
+			}
                         else if (args[counter].startsWith("-k"))
                         {
                                 theOneTrueEDAsuiteGEDA = false;
@@ -90,6 +110,10 @@ public class WilkinsonPowerDividerFootprintGenerator
 			
 		}
 
+		if (!portTrackWidthSpecified)
+		{
+			portTrackWidth = trackWidth;
+		}
 
 		// some preliminary calculations
 
@@ -97,6 +121,9 @@ public class WilkinsonPowerDividerFootprintGenerator
 		double wavelength = speedOfLight/(frequencyMhz); // v = f.lambda
 				// by dividing m/s by a frequency in MHz, we get microns
 				// this may need tweaking for electrical length 
+
+		// we now correct for velocity factor
+		wavelength = wavelength * velocityFactor;
 
 		double quarterWave = wavelength/4; // in microns
 
@@ -224,25 +251,27 @@ public class WilkinsonPowerDividerFootprintGenerator
 		}
 
 		// we now create the input and output ports and then finish off the footprint
+		// and we factor in a fatter input/output track width 'portTrackWidth' if specified
 
-                x1 = ((startRadius * Math.cos(theta))/1000.0);
-                y1 = ((startRadius * Math.sin(theta))/1000.0);
+                x1 = ((startRadius * Math.cos(theta))/1000.0) + ((portTrackWidth - trackWidth)/2.0)/1000.0;
+                y1 = ((portTrackWidth + resistorGap)/2.0)/1000.0;
 
 		if (theOneTrueEDAsuiteGEDA) // :-)
 		{
-			footprintOutput.print(generateGEDApad(x1, y1, (x1+3.0) , y1, trackWidthMM));
-			footprintOutput.print(generateGEDApad(x1, -y1, (x1+3.0), -y1, trackWidthMM));
-			footprintOutput.print(generateGEDApad((-startRadius/1000)-3, 0, (-startRadius/1000), 0, trackWidthMM));
+			footprintOutput.print(generateGEDApad(x1, y1, (x1+3.0) , y1, portTrackWidth/1000.0));
+			footprintOutput.print(generateGEDApad(x1, -y1, (x1+3.0), -y1, portTrackWidth/1000.0));
+			footprintOutput.print(generateGEDApad((-startRadius/1000)-3, 0, ((-startRadius/1000)-((portTrackWidth - trackWidth)/2)/1000), 0, portTrackWidth/1000.0));
 			footprintOutput.println(")");
 		}
 		else // kicad
 		{
-                        footprintOutput.print(generateKicadPad(x1, y1, (x1+3.0), y1, trackWidthMM, layerNumber));
-                        footprintOutput.print(generateKicadPad(x1, -y1, (x1+3.0), -y1, trackWidthMM, layerNumber));
-                        footprintOutput.print(generateKicadPad((-startRadius/1000)-3, 0, (-startRadius/1000), 0, trackWidthMM, layerNumber));
+                        footprintOutput.print(generateKicadPad(x1, y1, (x1+3.0), y1, portTrackWidth/1000.0, layerNumber));
+                        footprintOutput.print(generateKicadPad(x1, -y1, (x1+3.0), -y1, portTrackWidth/1000.0, layerNumber));
+                        footprintOutput.print(generateKicadPad((-startRadius/1000)-3, 0, ((-startRadius/1000)-((portTrackWidth - trackWidth)/2)/1000), 0, portTrackWidth/1000.0, layerNumber));
                 	footprintOutput.println("$EndMODULE " + moduleName);
 		}
-
+		System.out.println("Frequency of operation (MHz): " + frequencyMhz);
+		System.out.println("Velocity factor used: " + velocityFactor);
 		System.out.print("Total length of power divider arms (mm): ");
 		System.out.format("%.4f\n", cumulativeCoilLengthMM);
 		System.out.print("DC resistance of arms assuming copper resistivity = 1.75E-8 ohm.m\n\t35.56 micron copper thickness: ");
@@ -300,8 +329,12 @@ public class WilkinsonPowerDividerFootprintGenerator
 			"java WilkinsonPowerDividerFootprintGenerator -option value\n" +
 			"\n\t\t-k\texport a kicad module, default is geda .fp file\n" +
                         "\n\t\t-r long\t length of resistor gap in microns\n" +
-                        "\n\t\t-f long\t frequency of operation in Megahertz\n" +
+                        "\n\t\t-f double\t frequency of operation in Megahertz\n" +
                         "\n\t\t-w long\t track width in microns\n" +
+			"\n\t\t-p long\t input/output port track width in microns" +
+			"\n\t\t\tdefault: port track width = track width\n" +
+			"\n\t\t-v double\t velocity factor <= 1.0" +
+			"\n\t\t\tdefault: 1.0\n" +
 			"\n\t\t-l long\t length of segment used to approximate circular arc in microns\n" +
 			"\n\t\t-h\t prints this\n\n" +
 			"Example usage:\n\n\t" +

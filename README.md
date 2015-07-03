@@ -16,8 +16,11 @@ You can then compile the java source code:
 
 Tips:
 
-The utility adds input and output pads in the final three lines of the footprint file. Users will need to modify these to achieve the required impedance relative to the power divider arms. Users may wish to experiment with segment lengths to achieve a suitably rounded contour, and dimensions should be verified before sending off designs for fabrication.
+The utility adds input and output pads in the final three lines of the footprint file. Users will need to specify their dimensions to achieve the required stripline impedance relative to the power divider arms.
 
+Users may wish to experiment with segment lengths to achieve a suitably rounded contour, and dimensions should be verified before sending off designs for fabrication.
+
+The velocity factor of the PCB material will affect the dimensions and electrical length of the divider arms.
 
 Usage:
 
@@ -27,9 +30,15 @@ Usage:
 
 		-r long	 length of resistor gap in microns
 
-		-f long	 frequency of operation in Megahertz
+		-f double	 frequency of operation in Megahertz
 
 		-w long	 track width in microns
+
+		-p long	 input/output port track width in microns
+			default: port track width = track width
+
+		-v double	 velocity factor <= 1.0
+			default: 1.0
 
 		-l long	 length of segment used to approximate circular arc in microns
 
@@ -37,11 +46,12 @@ Usage:
 
 Example usage:
 
-	java WilkinsonPowerDividerFootprintGenerator -r 2000 -f 1800 -w 3000 -l 2000 -k
+	java WilkinsonPowerDividerFootprintGenerator -r 2000 -f 1800 -w 3000 -l 2000 -v 0.76 -p 4200 -k
 
 	generates a wilkinson power divider with two arms, each
-	lambda/4 in length, separated by a "resistor gap" of
-	2000 microns, track width of 3000 microns, and using
-	segment lengths of 2000 microns to create the arc
-	segments in a kicad module.
+	lambda/4 in length, assuming a substrate velocity factor
+	of 0.76, separated by a "resistor gap" of 2000 microns,
+	divider arm track width of 3000 microns, input and output
+	track widths of 4200 microns, and using segment lengths
+	of 2000 microns to create the arc segments in a kicad module.
 
