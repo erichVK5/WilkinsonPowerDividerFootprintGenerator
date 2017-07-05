@@ -1,5 +1,5 @@
 // WilkinsonPowerDividerFootprintGenerator.java v1.0
-// Copyright (C) 2015 Erich S. Heinzle, a1039181@gmail.com
+// Copyright (C) 2015, 2017 Erich S. Heinzle, a1039181@gmail.com
 
 //    see LICENSE-gpl-v2.txt for software license
 //    see README.txt
@@ -19,7 +19,7 @@
 //    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //    
 //    WilkinsonPowerDividerFootprintGenerator.java
-//    Copyright (C) 2015 Erich S. Heinzle a1039181@gmail.com
+//    Copyright (C) 2015, 2017 Erich S. Heinzle a1039181@gmail.com
 
 
 
@@ -42,6 +42,7 @@ public class WilkinsonPowerDividerFootprintGenerator
                 long segmentLength = 1000; // 1mm length in microns
                 long trackWidth = 220; // microns
 		long portTrackWidth = trackWidth; // microns
+		long portLength = 0; // microns
                 double frequencyMhz = 1000;
                 long resistorGap = 1000;    // microns
 		double velocityFactor = 1.0;
@@ -102,6 +103,11 @@ public class WilkinsonPowerDividerFootprintGenerator
                         {
                                 theOneTrueEDAsuiteGEDA = false;
                         }
+			else if (args[counter].startsWith("-t"))
+			{
+				portLength = Long.parseLong(args[counter+1]);
+				counter++;
+			}
                         else 
                         {
                                 printUsage();
@@ -258,17 +264,21 @@ public class WilkinsonPowerDividerFootprintGenerator
 
 		if (theOneTrueEDAsuiteGEDA) // :-)
 		{
-			footprintOutput.print(generateGEDApad(x1, y1, (x1+3.0) , y1, portTrackWidth/1000.0));
-			footprintOutput.print(generateGEDApad(x1, -y1, (x1+3.0), -y1, portTrackWidth/1000.0));
-			footprintOutput.print(generateGEDApad((-startRadius/1000)-3, 0, ((-startRadius/1000)-((portTrackWidth - trackWidth)/2)/1000), 0, portTrackWidth/1000.0));
+			if (portLength > 0) {
+				footprintOutput.print(generateGEDApad(x1, y1, (x1+portLength/1000) , y1, portTrackWidth/1000.0));
+				footprintOutput.print(generateGEDApad(x1, -y1, (x1+portLength/1000), -y1, portTrackWidth/1000.0));
+				footprintOutput.print(generateGEDApad((-startRadius/1000)-portLength/1000, 0, ((-startRadius/1000)-((portTrackWidth - trackWidth)/2)/1000), 0, portTrackWidth/1000.0));
+			}
 			footprintOutput.println(")");
 		}
 		else // kicad
 		{
-                        footprintOutput.print(generateKicadPad(x1, y1, (x1+3.0), y1, portTrackWidth/1000.0, layerNumber));
-                        footprintOutput.print(generateKicadPad(x1, -y1, (x1+3.0), -y1, portTrackWidth/1000.0, layerNumber));
-                        footprintOutput.print(generateKicadPad((-startRadius/1000)-3, 0, ((-startRadius/1000)-((portTrackWidth - trackWidth)/2)/1000), 0, portTrackWidth/1000.0, layerNumber));
-                	footprintOutput.println("$EndMODULE " + moduleName);
+			if (portLength > 0) {
+                        	footprintOutput.print(generateKicadPad(x1, y1, (x1+portLength/1000), y1, portTrackWidth/1000.0, layerNumber));
+                        	footprintOutput.print(generateKicadPad(x1, -y1, (x1+portLength/1000), -y1, portTrackWidth/1000.0, layerNumber));
+                        	footprintOutput.print(generateKicadPad((-startRadius/1000)-portLength/1000, 0, ((-startRadius/1000)-((portTrackWidth - trackWidth)/2)/1000), 0, portTrackWidth/1000.0, layerNumber));
+			}
+			footprintOutput.println("$EndMODULE " + moduleName);
 		}
 		System.out.println("Frequency of operation (MHz): " + frequencyMhz);
 		System.out.println("Velocity factor used: " + velocityFactor);
@@ -329,6 +339,7 @@ public class WilkinsonPowerDividerFootprintGenerator
 			"java WilkinsonPowerDividerFootprintGenerator -option value\n" +
 			"\n\t\t-k\texport a kicad module, default is geda .fp file\n" +
                         "\n\t\t-r long\t length of resistor gap in microns\n" +
+			"\n\t\t-t long\t length of terminals in microns (default 0)\n" +
                         "\n\t\t-f double\t frequency of operation in Megahertz\n" +
                         "\n\t\t-w long\t track width in microns\n" +
 			"\n\t\t-p long\t input/output port track width in microns" +
