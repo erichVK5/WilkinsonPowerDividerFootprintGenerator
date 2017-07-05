@@ -34,6 +34,8 @@ Usage:
 
 		-w long		track width in microns
 
+		-t long         input/output(s) terminal length, in microns, default is zero length
+
 		-p long		input/output port track width in microns
 					default: port track width = track width
 
