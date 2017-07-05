@@ -48,12 +48,13 @@ Usage:
 
 Example usage:
 
-	java WilkinsonPowerDividerFootprintGenerator -r 2000 -f 1800 -w 3000 -l 2000 -v 0.76 -p 4200 -k
+	java WilkinsonPowerDividerFootprintGenerator -r 2000 -f 1800 -w 3000 -l 2000 -v 0.76 -p 4200 -k -t 1200
 
 	generates a wilkinson power divider with two arms, each
 	lambda/4 in length, assuming a substrate velocity factor
 	of 0.76, separated by a "resistor gap" of 2000 microns,
 	divider arm track width of 3000 microns, input and output
-	track widths of 4200 microns, and using segment lengths
-	of 2000 microns to create the arc segments in a kicad module.
+	track widths of 4200 microns and lengths 1200 microns, and
+	using segment lengths of 2000 microns to create the arc
+	segments in a kicad module.
 
